@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats - Étude de la Dynamique de l'Érosion au Sénégal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 82, 73, 0.85), rgba(0, 82, 73, 0.9)), url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #10b981;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #059669, #10b981);
+            bottom: -10px;
+            left: 20%;
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        .result-section {
+            scroll-margin-top: 100px;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .department-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .department-table th, .department-table td {
+            border: 1px solid #d1fae5;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .department-table th {
+            background-color: #ecfdf5;
+            font-weight: 600;
+        }
+        .department-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .department-table tr:hover {
+            background-color: #f0fdf4;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold mr-3">
+                    ES
+                </div>
+                <span class="text-xl font-bold text-green-800">Érosion Sénégal</span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Accueil</a>
+                <a href="methodologie.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Méthodologie</a>
+                <a href="resultats.html" class="nav-link text-green-800 font-medium">Résultats</a>
+                <a href="cartes.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Cartes</a>
+                <a href="contact.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Contact</a>
+            </div>
+            
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-green-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menu mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-600 hover:text-green-700">Accueil</a>
+            <a href="methodologie.html" class="block py-2 text-gray-600 hover:text-green-700">Méthodologie</a>
+            <a href="resultats.html" class="block py-2 text-green-800 font-medium">Résultats</a>
+            <a href="cartes.html" class="block py-2 text-gray-600 hover:text-green-700">Cartes</a>
+            <a href="contact.html" class="block py-2 text-gray-600 hover:text-green-700">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20 md:py-28">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Résultats de l'Étude</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                Analyse détaillée des changements de vulnérabilité à l'érosion au Sénégal (2004-2019)
+            </p>
+        </div>
+    </section>
+
+    <!-- Navigation interne -->
+    <section class="py-6 bg-green-700 text-white sticky top-16 z-40 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto space-x-6 py-2">
+                <a href="#synthese" class="whitespace-nowrap hover:text-green-200 transition">Synthèse Générale</a>
+                <a href="#positifs" class="whitespace-nowrap hover:text-green-200 transition">Changements Positifs</a>
+                <a href="#negatifs" class="whitespace-nowrap hover:text-green-200 transition">Changements Négatifs</a>
+                <a href="#stables" class="whitespace-nowrap hover:text-green-200 transition">Zones Stables</a>
+                <a href="#analyse" class="whitespace-nowrap hover:text-green-200 transition">Analyse Spatiale</a>
+                <a href="#discussion" class="whitespace-nowrap hover:text-green-200 transition">Discussion</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Synthèse générale -->
+    <section id="synthese" class="result-section py-16 bg-green-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Synthèse Générale</h2>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Répartition Générale</h3>
+                        <div class="chart-container">
+                            <canvas id="generalDistributionChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Statistiques par Catégorie</h3>
+                        <div id="statistics-cards" class="space-y-4">
+                            <div class="p-4 bg-green-50 rounded-lg">
+                                <h4 class="font-semibold text-green-700 mb-2">Changements Positifs</h4>
+                                <div class="grid grid-cols-3 gap-2 text-sm">
+                                    <div><span class="font-semibold">Elevé:</span> <span id="pos-eleve">-</span></div>
+                                    <div><span class="font-semibold">Moyen:</span> <span id="pos-moyen">-</span></div>
+                                    <div><span class="font-semibold">Faible:</span> <span id="pos-faible">-</span></div>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-red-50 rounded-lg">
+                                <h4 class="font-semibold text-red-700 mb-2">Changements Négatifs</h4>
+                                <div class="grid grid-cols-3 gap-2 text-sm">
+                                    <div><span class="font-semibold">Elevé:</span> <span id="neg-eleve">-</span></div>
+                                    <div><span class="font-semibold">Moyen:</span> <span id="neg-moyen">-</span></div>
+                                    <div><span class="font-semibold">Faible:</span> <span id="neg-faible">-</span></div>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-lg">
+                                <h4 class="font-semibold text-blue-700 mb-2">Zones Stables</h4>
+                                <div class="grid grid-cols-3 gap-2 text-sm">
+                                    <div><span class="font-semibold">Elevé:</span> <span id="stab-eleve">-</span></div>
+                                    <div><span class="font-semibold">Moyen:</span> <span id="stab-moyen">-</span></div>
+                                    <div><span class="font-semibold">Faible:</span> <span id="stab-faible">-</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Résumé des Principaux Résultats</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600 mx-auto mb-3">
+                                <i class="fas fa-arrow-up text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-green-700 mb-2">Améliorations Significatives</h4>
+                            <p class="text-gray-700 text-sm" id="synthesis-positive">
+                                Chargement des données...
+                            </p>
+                        </div>
+                        
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 mx-auto mb-3">
+                                <i class="fas fa-arrow-down text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-red-700 mb-2">Dégradations Préoccupantes</h4>
+                            <p class="text-gray-700 text-sm" id="synthesis-negative">
+                                Chargement des données...
+                            </p>
+                        </div>
+                        
+                        <div class="text-center p-4">
+                            <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mx-auto mb-3">
+                                <i class="fas fa-pause text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-blue-700 mb-2">Stabilité Remarquable</h4>
+                            <p class="text-gray-700 text-sm" id="synthesis-stable">
+                                Chargement des données...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Changements positifs -->
+    <section id="positifs" class="result-section py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Changements Positifs</h2>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Répartition Spatiale</h3>
+                        <div class="chart-container">
+                            <canvas id="positiveRegionsChart"></canvas>
+                        </div>
+                        <p class="text-gray-700 mt-4">
+                            Les améliorations les plus significatives sont observées dans les régions de 
+                            Tambacounda, Kédougou et Kolda, où les programmes de reboissement et la régénération 
+                            naturelle ont porté leurs fruits.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Facteurs d'Amélioration</h3>
+                        <ul class="text-gray-700 space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span><strong>Reboisement:</strong> Programmes nationaux et initiatives locales</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span><strong>Régénération naturelle:</strong> Augmentation de la biomasse végétale</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span><strong>Pratiques agricoles:</strong> Adoption de techniques de conservation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span><strong>Conditions climatiques:</strong> Retour à des précipitations favorables</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Départements avec les Plus Fortes Améliorations</h3>
+                    <div class="overflow-x-auto">
+                        <table class="department-table">
+                            <thead>
+                                <tr>
+                                    <th>Département</th>
+                                    <th>Région</th>
+                                    <th>Classification</th>
+                                    <th>Principales causes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center text-gray-500">Chargement des données...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Changements négatifs -->
+    <section id="negatifs" class="result-section py-16 bg-red-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Changements Négatifs</h2>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Répartition Spatiale</h3>
+                        <div class="chart-container">
+                            <canvas id="negativeRegionsChart"></canvas>
+                        </div>
+                        <p class="text-gray-700 mt-4">
+                            Les dégradations sont particulièrement prononcées dans le bassin arachidier et les 
+                            zones périurbaines, où la pression agricole et l'expansion urbaine exercent une 
+                            forte pression sur les sols.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Facteurs de Dégradation</h3>
+                        <ul class="text-gray-700 space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+                                <span><strong>Expansion agricole:</strong> Mise en culture de nouvelles terres</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+                                <span><strong>Défrichement:</strong> Perte de couverture végétale protectrice</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+                                <span><strong>Urbanisation:</strong> Artificialisation des sols</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+                                <span><strong>Pression démographique:</strong> Surexploitation des ressources</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Départements les Plus Touchés</h3>
+                    <div class="overflow-x-auto">
+                        <table class="department-table">
+                            <thead>
+                                <tr>
+                                    <th>Département</th>
+                                    <th>Région</th>
+                                    <th>Classification</th>
+                                    <th>Principales causes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center text-gray-500">Chargement des données...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Zones stables -->
+    <section id="stables" class="result-section py-16 bg-blue-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Zones Stables</h2>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Caractéristiques des Zones Stables</h3>
+                        <p class="text-gray-700 mb-4" id="stable-description">
+                            Les zones stables se caractérisent par une résilience notable face aux pressions environnementales et 
+                            anthropiques. Chargement des statistiques...
+                        </p>
+                        <ul class="text-gray-700 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-shield-alt text-blue-500 mt-1 mr-3"></i>
+                                <span>Écosystèmes matures et bien établis</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-shield-alt text-blue-500 mt-1 mr-3"></i>
+                                <span>Pratiques d'utilisation des terres durables</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-shield-alt text-blue-500 mt-1 mr-3"></i>
+                                <span>Faible pression anthropique</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-shield-alt text-blue-500 mt-1 mr-3"></i>
+                                <span>Conditions pédoclimatiques favorables</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-4">Répartition par Type d'Occupation</h3>
+                        <div class="chart-container">
+                            <canvas id="stableLandUseChart"></canvas>
+                        </div>
+                        <p class="text-gray-700 mt-4">
+                            La stabilité est particulièrement marquée dans les zones de végétation naturelle 
+                            dense et les écosystèmes bien conservés, tandis que les zones agricoles montrent 
+                            une plus grande variabilité.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Discussion -->
+    <section id="discussion" class="result-section py-16 bg-green-800 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 section-title">Discussion et Implications</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-green-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4">Implications pour la Gestion des Terres</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-300 mt-1 mr-3"></i>
+                                <span>Nécessité de maintenir les programmes de reboissement dans les zones d'amélioration</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-300 mt-1 mr-3"></i>
+                                <span>Urgence d'interventions ciblées dans les zones de dégradation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-300 mt-1 mr-3"></i>
+                                <span>Importance de préserver les zones stables par des mesures de protection</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4">Perspectives de Recherche</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-search text-green-300 mt-1 mr-3"></i>
+                                <span>Analyse plus fine des facteurs locaux influençant les dynamiques</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-search text-green-300 mt-1 mr-3"></i>
+                                <span>Étude des impacts socio-économiques des changements observés</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-search text-green-300 mt-1 mr-3"></i>
+                                <span>Développement de modèles prédictifs pour anticiper les évolutions</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-green-700 p-6 rounded-lg mt-8">
+                    <h3 class="text-xl font-semibold mb-4">Conclusion Principale</h3>
+                    <p class="text-green-100">
+                        Cette étude révèle une forte hétérogénéité spatiale des dynamiques d'érosion au Sénégal, 
+                        avec la coexistence de zones d'amélioration et de dégradation au sein des mêmes départements. 
+                        Cette complexité démontre la nécessité d'approches territorialisées pour la lutte contre l'érosion, 
+                        adaptées aux contextes locaux spécifiques.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation entre pages -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-4xl mx-auto">
+                <a href="methodologie.html" class="flex items-center text-green-700 hover:text-green-800 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Voir la méthodologie
+                </a>
+                
+                <a href="cartes.html" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 flex items-center">
+                    Explorer les cartes
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Étude de l'Érosion au Sénégal</h3>
+                    <p class="text-green-200">
+                        Analyse des changements de vulnérabilité à l'érosion entre 2004 et 2019 à l'échelle départementale.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Liens Rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-green-200 hover:text-white transition">Accueil</a></li>
+                        <li><a href="methodologie.html" class="text-green-200 hover:text-white transition">Méthodologie</a></li>
+                        <li><a href="resultats.html" class="text-green-200 hover:text-white transition">Résultats</a></li>
+                        <li><a href="cartes.html" class="text-green-200 hover:text-white transition">Cartes</a></li>
+                        <li><a href="contact.html" class="text-green-200 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-user mr-3 text-green-300"></i>
+                        <span>Mamadou SOW</span>
+                    </div>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-envelope mr-3 text-green-300"></i>
+                        <span>mamadou.sowa@astro-tubes.eu</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone mr-3 text-green-300"></i>
+                        <span>+221 79 311 79 54</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-green-800 mt-8 pt-8 text-center text-green-300">
+                <p>&copy; 2025 - Étude de la Dynamique de l'Érosion au Sénégal (2004-2019). Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobile
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Navigation interne fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Variables globales pour stocker les données
+        let geojsonData = null;
+        let statistics = null;
+
+        // Fonction pour calculer les statistiques
+        function calculateStatistics(data) {
+            const stats = {
+                total: data.features.length,
+                positive: { eleve: 0, moyen: 0, faible: 0, total: 0 },
+                negative: { eleve: 0, moyen: 0, faible: 0, total: 0 },
+                stable: { eleve: 0, moyen: 0, faible: 0, total: 0 },
+                byRegion: {},
+                departments: []
+            };
+
+            data.features.forEach(feature => {
+                const props = feature.properties;
+                const region = props.region || 'Inconnu';
+                const dept = {
+                    id: props.id_dep,
+                    nom: props.departement,
+                    region: region,
+                    positive: props.class_positive || 'Faible',
+                    negative: props.class_negative || 'Faible',
+                    stable: props.clas_nochange || 'Faible'
+                };
+
+                // Compter les catégories positives
+                if (props.class_positive === 'Elevé') stats.positive.eleve++;
+                else if (props.class_positive === 'Moyen') stats.positive.moyen++;
+                else stats.positive.faible++;
+                stats.positive.total++;
+
+                // Compter les catégories négatives
+                if (props.class_negative === 'Elevé') stats.negative.eleve++;
+                else if (props.class_negative === 'Moyen') stats.negative.moyen++;
+                else stats.negative.faible++;
+                stats.negative.total++;
+
+                // Compter les catégories stables
+                if (props.clas_nochange === 'Elevé') stats.stable.eleve++;
+                else if (props.clas_nochange === 'Moyen') stats.stable.moyen++;
+                else stats.stable.faible++;
+                stats.stable.total++;
+
+                // Par région
+                if (!stats.byRegion[region]) {
+                    stats.byRegion[region] = {
+                        positive: { eleve: 0, moyen: 0, faible: 0 },
+                        negative: { eleve: 0, moyen: 0, faible: 0 },
+                        stable: { eleve: 0, moyen: 0, faible: 0 },
+                        total: 0
+                    };
+                }
+                stats.byRegion[region].total++;
+                if (props.class_positive === 'Elevé') stats.byRegion[region].positive.eleve++;
+                else if (props.class_positive === 'Moyen') stats.byRegion[region].positive.moyen++;
+                else stats.byRegion[region].positive.faible++;
+                
+                if (props.class_negative === 'Elevé') stats.byRegion[region].negative.eleve++;
+                else if (props.class_negative === 'Moyen') stats.byRegion[region].negative.moyen++;
+                else stats.byRegion[region].negative.faible++;
+                
+                if (props.clas_nochange === 'Elevé') stats.byRegion[region].stable.eleve++;
+                else if (props.clas_nochange === 'Moyen') stats.byRegion[region].stable.moyen++;
+                else stats.byRegion[region].stable.faible++;
+
+                stats.departments.push(dept);
+            });
+
+            return stats;
+        }
+
+        // Fonction pour mettre à jour la synthèse générale
+        function updateSynthesis(stats) {
+            const total = stats.total;
+            const positiveEleve = stats.positive.eleve;
+            const negativeEleve = stats.negative.eleve;
+            const stableEleve = stats.stable.eleve;
+
+            // Mettre à jour les statistiques détaillées
+            document.getElementById('pos-eleve').textContent = stats.positive.eleve;
+            document.getElementById('pos-moyen').textContent = stats.positive.moyen;
+            document.getElementById('pos-faible').textContent = stats.positive.faible;
+            
+            document.getElementById('neg-eleve').textContent = stats.negative.eleve;
+            document.getElementById('neg-moyen').textContent = stats.negative.moyen;
+            document.getElementById('neg-faible').textContent = stats.negative.faible;
+            
+            document.getElementById('stab-eleve').textContent = stats.stable.eleve;
+            document.getElementById('stab-moyen').textContent = stats.stable.moyen;
+            document.getElementById('stab-faible').textContent = stats.stable.faible;
+
+            // Mettre à jour les textes de synthèse
+            document.getElementById('synthesis-positive').textContent = 
+                `${positiveEleve} départements montrent des améliorations significatives (catégorie Elevé), ` +
+                `${stats.positive.moyen} avec des améliorations modérées (Moyen), ` +
+                `principalement dans les régions ayant bénéficié de programmes de reboissement.`;
+            
+            document.getElementById('synthesis-negative').textContent = 
+                `${negativeEleve} départements présentent des dégradations importantes (catégorie Elevé), ` +
+                `${stats.negative.moyen} avec des dégradations modérées (Moyen), ` +
+                `concentrées dans les zones de forte pression agricole et d'urbanisation.`;
+            
+            document.getElementById('synthesis-stable').textContent = 
+                `${stableEleve} départements maintiennent une stabilité notable (catégorie Elevé), ` +
+                `${stats.stable.moyen} avec une stabilité modérée (Moyen), ` +
+                `indiquant une résilience des écosystèmes face aux changements.`;
+            
+            // Mettre à jour la description des zones stables
+            const stablePercentage = ((stats.stable.eleve + stats.stable.moyen + stats.stable.faible) / total * 100).toFixed(1);
+            document.getElementById('stable-description').textContent = 
+                `Les zones stables représentent ${total} départements (100% du territoire analysé) avec ` +
+                `${stats.stable.eleve} départements en catégorie Elevé, ${stats.stable.moyen} en Moyen, ` +
+                `et ${stats.stable.faible} en Faible. Elles se caractérisent par une résilience notable face aux pressions environnementales et anthropiques.`;
+        }
+
+        // Fonction pour générer les tableaux
+        function generateTables(stats) {
+            // Tableau des changements positifs
+            const positiveTable = document.querySelector('#positifs .department-table tbody');
+            if (positiveTable) {
+                positiveTable.innerHTML = '';
+                const positiveDepts = stats.departments
+                    .filter(d => d.positive === 'Elevé' || d.positive === 'Moyen')
+                    .sort((a, b) => {
+                        const order = { 'Elevé': 2, 'Moyen': 1, 'Faible': 0 };
+                        return order[b.positive] - order[a.positive];
+                    })
+                    .slice(0, 10);
+
+                positiveDepts.forEach(dept => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${dept.nom}</td>
+                        <td>${dept.region}</td>
+                        <td><span class="font-semibold" style="color: ${dept.positive === 'Elevé' ? '#006400' : '#32CD32'}">${dept.positive}</span></td>
+                        <td>${dept.positive === 'Elevé' ? 'Améliorations majeures, reboisement actif' : 'Améliorations modérées, régénération naturelle'}</td>
+                    `;
+                    positiveTable.appendChild(row);
+                });
+            }
+
+            // Tableau des changements négatifs
+            const negativeTable = document.querySelector('#negatifs .department-table tbody');
+            if (negativeTable) {
+                negativeTable.innerHTML = '';
+                const negativeDepts = stats.departments
+                    .filter(d => d.negative === 'Elevé' || d.negative === 'Moyen')
+                    .sort((a, b) => {
+                        const order = { 'Elevé': 2, 'Moyen': 1, 'Faible': 0 };
+                        return order[b.negative] - order[a.negative];
+                    })
+                    .slice(0, 10);
+
+                negativeDepts.forEach(dept => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${dept.nom}</td>
+                        <td>${dept.region}</td>
+                        <td><span class="font-semibold" style="color: ${dept.negative === 'Elevé' ? '#8B0000' : '#DC143C'}">${dept.negative}</span></td>
+                        <td>${dept.negative === 'Elevé' ? 'Dégradations majeures, pression anthropique forte' : 'Dégradations modérées, expansion agricole'}</td>
+                    `;
+                    negativeTable.appendChild(row);
+                });
+            }
+        }
+
+        // Fonction pour créer les graphiques
+        function createCharts(stats) {
+            // Graphique de distribution générale
+            const generalCtx = document.getElementById('generalDistributionChart');
+            if (generalCtx) {
+                new Chart(generalCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Changements Positifs Elevé', 'Changements Positifs Moyen', 'Changements Positifs Faible',
+                                'Changements Négatifs Elevé', 'Changements Négatifs Moyen', 'Changements Négatifs Faible',
+                                'Zones Stables Elevé', 'Zones Stables Moyen', 'Zones Stables Faible'],
+                        datasets: [{
+                            data: [
+                                stats.positive.eleve, stats.positive.moyen, stats.positive.faible,
+                                stats.negative.eleve, stats.negative.moyen, stats.negative.faible,
+                                stats.stable.eleve, stats.stable.moyen, stats.stable.faible
+                            ],
+                            backgroundColor: [
+                                '#006400', '#32CD32', '#90EE90',  // Positifs
+                                '#8B0000', '#DC143C', '#FF6347',  // Négatifs
+                                '#000080', '#1E90FF', '#87CEEB'   // Stables
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { size: 10 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = stats.total;
+                                        const value = context.raw;
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${context.label}: ${value} départements (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Graphique de distribution des changements positifs par région
+            const positiveRegionsCtx = document.getElementById('positiveRegionsChart');
+            if (positiveRegionsCtx) {
+                const regions = Object.keys(stats.byRegion);
+                const positiveData = regions.map(r => {
+                    const reg = stats.byRegion[r];
+                    return reg.positive.eleve * 3 + reg.positive.moyen * 2 + reg.positive.faible;
+                });
+                
+                new Chart(positiveRegionsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: regions,
+                        datasets: [{
+                            label: 'Score de changements positifs',
+                            data: positiveData,
+                            backgroundColor: '#10b981'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Score (Elevé=3, Moyen=2, Faible=1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Graphique des changements négatifs par région
+            const negativeRegionsCtx = document.getElementById('negativeRegionsChart');
+            if (negativeRegionsCtx) {
+                const regions = Object.keys(stats.byRegion);
+                const negativeData = regions.map(r => {
+                    const reg = stats.byRegion[r];
+                    return reg.negative.eleve * 3 + reg.negative.moyen * 2 + reg.negative.faible;
+                });
+                
+                new Chart(negativeRegionsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: regions,
+                        datasets: [{
+                            label: 'Score de changements négatifs',
+                            data: negativeData,
+                            backgroundColor: '#ef4444'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Score (Elevé=3, Moyen=2, Faible=1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Graphique de répartition des zones stables par catégorie
+            const stableLandUseCtx = document.getElementById('stableLandUseChart');
+            if (stableLandUseCtx) {
+                new Chart(stableLandUseCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Elevé', 'Moyen', 'Faible'],
+                        datasets: [{
+                            data: [stats.stable.eleve, stats.stable.moyen, stats.stable.faible],
+                            backgroundColor: ['#000080', '#1E90FF', '#87CEEB']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = stats.stable.total;
+                                        const value = context.raw;
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${context.label}: ${value} départements (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Charger les données GeoJSON
+        fetch('data/donnees.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonData = data;
+                statistics = calculateStatistics(data);
+                
+                // Mettre à jour la page
+                updateSynthesis(statistics);
+                generateTables(statistics);
+                createCharts(statistics);
+                
+                console.log('Données chargées avec succès:', statistics);
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des données:', error);
+                alert('Erreur lors du chargement des données. Veuillez vérifier que le fichier data/donnees.geojson existe.');
+            });
+    </script>
+</body>
+</html>

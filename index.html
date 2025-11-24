@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étude de la Dynamique de l'Érosion au Sénégal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 82, 73, 0.85), rgba(0, 82, 73, 0.9)), url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #10b981;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #059669, #10b981);
+            bottom: -10px;
+            left: 20%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold mr-3">
+                    ES
+                </div>
+                <span class="text-xl font-bold text-green-800">Érosion Sénégal</span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-green-800 font-medium">Accueil</a>
+                <a href="methodologie.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Méthodologie</a>
+                <a href="resultats.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Résultats</a>
+                <a href="cartes.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Cartes</a>
+                <a href="contact.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Contact</a>
+            </div>
+            
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-green-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menu mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-green-800 font-medium">Accueil</a>
+            <a href="methodologie.html" class="block py-2 text-gray-600 hover:text-green-700">Méthodologie</a>
+            <a href="resultats.html" class="block py-2 text-gray-600 hover:text-green-700">Résultats</a>
+            <a href="cartes.html" class="block py-2 text-gray-600 hover:text-green-700">Cartes</a>
+            <a href="contact.html" class="block py-2 text-gray-600 hover:text-green-700">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20 md:py-32">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">Étude de la Dynamique de l'Érosion au Sénégal</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                Analyse des changements positifs, négatifs et des zones stables (2004-2019) à l'échelle départementale
+            </p>
+            <div class="flex flex-col md:flex-row justify-center gap-4 mt-10">
+                <a href="#introduction" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300">
+                    Découvrir l'étude
+                </a>
+                <a href="cartes.html" class="bg-transparent border-2 border-white hover:bg-white hover:text-green-800 text-white px-6 py-3 rounded-lg font-medium transition duration-300">
+                    Voir les cartes
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section id="introduction" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Introduction</h2>
+            
+            <div class="flex flex-col md:flex-row items-center gap-10">
+                <div class="md:w-1/2">
+                    <img src="img/image01.PNG" 
+                         alt="Paysage sénégalais" class="rounded-lg shadow-lg">
+                </div>
+                
+                <div class="md:w-1/2">
+                    <p class="text-gray-700 text-lg mb-6">
+                        L'érosion des sols constitue une problématique environnementale majeure au Sénégal, 
+                        exacerbée par les changements d'occupation du sol. Ces transformations, induites par les 
+                        changements climatiques, la pression démographique et les activités anthropiques, modifient 
+                        la vulnérabilité des sols face aux processus érosifs.
+                    </p>
+                    <p class="text-gray-700 text-lg">
+                        La compréhension de ces dynamiques spatiales est essentielle pour une gestion durable 
+                        des ressources naturelles et la lutte contre la dégradation des terres.
+                    </p>
+                    
+                    <div class="mt-8 p-6 bg-green-50 rounded-lg border-l-4 border-green-500">
+                        <h3 class="text-xl font-semibold text-green-800 mb-2">Objectif principal</h3>
+                        <p class="text-gray-700">
+                            Analyser et cartographier les changements de vulnérabilité à l'érosion au Sénégal entre 2004 et 2019
+                            à l'échelle départementale, en intégrant les coefficients écologiques des différentes unités d'occupation
+                            du sol.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Points clés -->
+    <section class="py-16 bg-green-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Points Clés de l'Étude</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                        <i class="fas fa-satellite text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-green-800 mb-3">Données MODIS</h3>
+                    <p class="text-gray-700">
+                        Utilisation d'images satellitaires MODIS d'une résolution spatiale de 500 mètres, 
+                        couvrant la période 2004-2018 pour une analyse efficace à l'échelle départementale.
+                    </p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                        <i class="fas fa-map-marked-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-green-800 mb-3">Cartographie Détaillée</h3>
+                    <p class="text-gray-700">
+                        Production de cartes des changements positifs, négatifs et des zones stables 
+                        dans la vulnérabilité à l'érosion à l'échelle départementale.
+                    </p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-green-800 mb-3">Analyse Comparative</h3>
+                    <p class="text-gray-700">
+                        Évaluation comparative entre deux périodes distinctes (2004-2009 et 2014-2019) 
+                        pour identifier l'évolution du risque érosif.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Méthodologie Résumée -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Approche Méthodologique</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col md:flex-row mb-12">
+                    <div class="md:w-1/3 flex justify-center mb-6 md:mb-0">
+                        <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                            <span class="text-2xl font-bold">1</span>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-3">Collecte des Données</h3>
+                        <p class="text-gray-700">
+                            Utilisation d'images MODIS annuelles pour les périodes 2004-2009 et 2014-2019. 
+                            Création d'images composites moyennes pour chaque période.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row mb-12">
+                    <div class="md:w-1/3 flex justify-center mb-6 md:mb-0">
+                        <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                            <span class="text-2xl font-bold">2</span>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-3">Intégration des Coefficients</h3>
+                        <p class="text-gray-700">
+                            Réclassification des images en tenant compte des coefficients écologiques 
+                            propres à chaque unité d'occupation du sol pour évaluer le potentiel érosif.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/3 flex justify-center mb-6 md:mb-0">
+                        <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                            <span class="text-2xl font-bold">3</span>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h3 class="text-2xl font-semibold text-green-800 mb-3">Détection des Changements</h3>
+                        <p class="text-gray-700">
+                            Identification des changements par soustraction des images réclassifiées 
+                            pour générer une carte des différences de vulnérabilité à l'érosion.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12">
+                    <a href="methodologie.html" class="inline-flex items-center text-green-700 hover:text-green-800 font-medium">
+                        Voir la méthodologie détaillée
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Aperçu des Résultats -->
+    <section class="py-16 bg-green-800 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 section-title">Aperçu des Résultats</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-green-700 p-6 rounded-lg text-center card-hover">
+                    <div class="text-4xl font-bold text-green-200 mb-2" id="stats-years">15</div>
+                    <h3 class="text-xl font-semibold mb-3">Années d'Analyse</h3>
+                    <p class="text-green-100">
+                        Période d'étude couvrant 15 années d'observation (2004-2019)
+                    </p>
+                </div>
+                
+                <div class="bg-green-700 p-6 rounded-lg text-center card-hover">
+                    <div class="text-4xl font-bold text-green-200 mb-2" id="stats-departments">-</div>
+                    <h3 class="text-xl font-semibold mb-3">Départements</h3>
+                    <p class="text-green-100" id="stats-departments-desc">
+                        Chargement des données...
+                    </p>
+                </div>
+                
+                <div class="bg-green-700 p-6 rounded-lg text-center card-hover">
+                    <div class="text-4xl font-bold text-green-200 mb-2">3</div>
+                    <h3 class="text-xl font-semibold mb-3">Types de Changements</h3>
+                    <p class="text-green-100">
+                        Identification des changements positifs, négatifs et des zones stables
+                    </p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mt-8">
+                <div class="bg-green-700 p-6 rounded-lg text-center card-hover">
+                    <div class="text-3xl font-bold text-green-200 mb-2" id="stats-positive-eleve">-</div>
+                    <h3 class="text-lg font-semibold mb-2">Changements Positifs Élevés</h3>
+                    <p class="text-green-100 text-sm">
+                        Départements avec améliorations significatives
+                    </p>
+                </div>
+                
+                <div class="bg-green-700 p-6 rounded-lg text-center card-hover">
+                    <div class="text-3xl font-bold text-green-200 mb-2" id="stats-negative-eleve">-</div>
+                    <h3 class="text-lg font-semibold mb-2">Changements Négatifs Élevés</h3>
+                    <p class="text-green-100 text-sm">
+                        Départements avec dégradations importantes
+                    </p>
+                </div>
+                
+                <div class="bg-green-700 p-6 rounded-lg text-center card-hover">
+                    <div class="text-3xl font-bold text-green-200 mb-2" id="stats-stable-eleve">-</div>
+                    <h3 class="text-lg font-semibold mb-2">Zones Stables Élevées</h3>
+                    <p class="text-green-100 text-sm">
+                        Départements avec stabilité remarquable
+                    </p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="resultats.html" class="bg-white text-green-800 hover:bg-green-100 px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center">
+                    Explorer les résultats complets
+                    <i class="fas fa-chart-bar ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-green-900 mb-6">Explorez les Données de l'Étude</h2>
+            <p class="text-xl text-gray-700 max-w-2xl mx-auto mb-10">
+                Découvrez les cartes interactives, visualisez les dynamiques d'érosion et consultez les résultats détaillés par département.
+            </p>
+            <a href="cartes.html" class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-medium text-lg transition duration-300 inline-flex items-center">
+                <i class="fas fa-map mr-3"></i>
+                Accéder aux cartes interactives
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Étude de l'Érosion au Sénégal</h3>
+                    <p class="text-green-200">
+                        Analyse des changements de vulnérabilité à l'érosion entre 2004 et 2019 à l'échelle départementale.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Liens Rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-green-200 hover:text-white transition">Accueil</a></li>
+                        <li><a href="methodologie.html" class="text-green-200 hover:text-white transition">Méthodologie</a></li>
+                        <li><a href="resultats.html" class="text-green-200 hover:text-white transition">Résultats</a></li>
+                        <li><a href="cartes.html" class="text-green-200 hover:text-white transition">Cartes</a></li>
+                        <li><a href="contact.html" class="text-green-200 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-user mr-3 text-green-300"></i>
+                        <span>Mamadou SOW</span>
+                    </div>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-envelope mr-3 text-green-300"></i>
+                        <span>mamadou.sowa@astro-tubes.eu</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone mr-3 text-green-300"></i>
+                        <span>+221 79 311 79 54</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-green-800 mt-8 pt-8 text-center text-green-300">
+                <p>&copy; 2025 - Étude de la Dynamique de l'Érosion au Sénégal (2004-2019). Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobile
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Fermer le menu mobile si ouvert
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        // Charger les statistiques depuis le GeoJSON
+        fetch('data/donnees.geojson')
+            .then(response => response.json())
+            .then(data => {
+                const totalDepartments = data.features.length;
+                
+                // Compter les catégories
+                let positiveEleve = 0, negativeEleve = 0, stableEleve = 0;
+                
+                data.features.forEach(feature => {
+                    const props = feature.properties;
+                    if (props.class_positive === 'Élevé') positiveEleve++;
+                    if (props.class_negative === 'Élevé') negativeEleve++;
+                    if (props.clas_nochange === 'Élevé') stableEleve++;
+                });
+                
+                // Mettre à jour les statistiques
+                document.getElementById('stats-departments').textContent = totalDepartments;
+                document.getElementById('stats-departments-desc').textContent = 
+                    `Analyse réalisée à l'échelle des ${totalDepartments} départements du Sénégal`;
+                
+                document.getElementById('stats-positive-eleve').textContent = positiveEleve;
+                document.getElementById('stats-negative-eleve').textContent = negativeEleve;
+                document.getElementById('stats-stable-eleve').textContent = stableEleve;
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des statistiques:', error);
+                // Garder les valeurs par défaut en cas d'erreur
+            });
+    </script>
+</body>
+</html>

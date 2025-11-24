@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartes - Étude de la Dynamique de l'Érosion au Sénégal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 82, 73, 0.85), rgba(0, 82, 73, 0.9)), url('https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #10b981;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #059669, #10b981);
+            bottom: -10px;
+            left: 20%;
+        }
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 8px;
+            z-index: 1;
+        }
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+        .map-container {
+            position: relative;
+        }
+        .map-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .static-map {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .static-map:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background: #059669;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Modal pour les cartes statiques */
+        .map-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            animation: fadeIn 0.3s ease;
+        }
+        .map-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .map-modal-content {
+            position: relative;
+            max-width: 95%;
+            max-height: 95%;
+            margin: auto;
+            animation: zoomIn 0.3s ease;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .map-modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+        .map-modal-image.zoomed {
+            transform: scale(2);
+            cursor: zoom-out;
+        }
+        .map-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            z-index: 10000;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+        }
+        .map-modal-close:hover {
+            transform: rotate(90deg);
+            background-color: rgba(255, 0, 0, 0.7);
+        }
+        .map-modal-title {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            color: #fff;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        #loading-indicator {
+            z-index: 1000;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold mr-3">
+                    ES
+                </div>
+                <span class="text-xl font-bold text-green-800">Érosion Sénégal</span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Accueil</a>
+                <a href="methodologie.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Méthodologie</a>
+                <a href="resultats.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Résultats</a>
+                <a href="cartes.html" class="nav-link text-green-800 font-medium">Cartes</a>
+                <a href="contact.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Contact</a>
+            </div>
+            
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-green-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menu mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-600 hover:text-green-700">Accueil</a>
+            <a href="methodologie.html" class="block py-2 text-gray-600 hover:text-green-700">Méthodologie</a>
+            <a href="resultats.html" class="block py-2 text-gray-600 hover:text-green-700">Résultats</a>
+            <a href="cartes.html" class="block py-2 text-green-800 font-medium">Cartes</a>
+            <a href="contact.html" class="block py-2 text-gray-600 hover:text-green-700">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20 md:py-28">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Cartes et Visualisations</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                Exploration des dynamiques d'érosion à travers des cartes statiques et interactives
+            </p>
+        </div>
+    </section>
+
+    <!-- Cartes Statiques -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Cartes Statiques</h2>
+            
+            <div class="max-w-5xl mx-auto">
+                <!-- Onglets pour les cartes statiques -->
+                <div class="flex overflow-x-auto mb-6">
+                    <button class="tab-button active" data-tab="tab-1">Changements Positifs</button>
+                    <button class="tab-button" data-tab="tab-2">Changements Négatifs</button>
+                    <button class="tab-button" data-tab="tab-3">Zones Stables</button>
+                    <button class="tab-button" data-tab="tab-4">Carte Combinée</button>
+                </div>
+                
+                <!-- Contenu des onglets -->
+                <div id="tab-1" class="tab-content active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <img src="map/changement positif.png" 
+                                 alt="Carte des changements positifs" class="w-full h-64 object-cover rounded-lg shadow-md static-map">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-green-800 mb-4">Changements Positifs</h3>
+                            <p class="text-gray-700 mb-4">
+                                Cette carte présente les zones ayant connu une amélioration de leur résistance à l'érosion 
+                                entre 2004-2009 et 2014-2019. Ces zones correspondent à des transitions vers des occupations 
+                                du sol à plus faible coefficient écologique érosif.
+                            </p>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-700 mb-2">Interprétation</h4>
+                                <ul class="text-gray-700 text-sm space-y-1">
+                                    <li>• Augmentation de la couverture végétale</li>
+                                    <li>• Reboisement de zones dégradées</li>
+                                    <li>• Amélioration des pratiques agricoles</li>
+                                    <li>• Réduction du risque érosif</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab-2" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <img src="map/changement negatif.png" 
+                                 alt="Carte des changements négatifs" class="w-full h-64 object-cover rounded-lg shadow-md static-map">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-green-800 mb-4">Changements Négatifs</h3>
+                            <p class="text-gray-700 mb-4">
+                                Cette carte illustre les zones ayant subi une dégradation de leur résistance à l'érosion 
+                                entre les deux périodes. Ces zones reflètent des transitions vers des occupations du sol 
+                                à plus fort coefficient écologique érosif.
+                            </p>
+                            <div class="bg-red-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-red-700 mb-2">Interprétation</h4>
+                                <ul class="text-gray-700 text-sm space-y-1">
+                                    <li>• Perte de couverture végétale</li>
+                                    <li>• Expansion des sols nus</li>
+                                    <li>• Urbanisation croissante</li>
+                                    <li>• Augmentation du risque érosif</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab-3" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <img src="map/non changement.png" 
+                                 alt="Carte des zones stables" class="w-full h-64 object-cover rounded-lg shadow-md static-map">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-green-800 mb-4">Zones Stables</h3>
+                            <p class="text-gray-700 mb-4">
+                                Cette carte identifie les départements où le potentiel érosif est resté relativement constant, 
+                                indiquant une stabilité des types d'occupation du sol et de leur contribution à l'érosion.
+                            </p>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-700 mb-2">Interprétation</h4>
+                                <ul class="text-gray-700 text-sm space-y-1">
+                                    <li>• Stabilité des écosystèmes</li>
+                                    <li>• Continuité des pratiques d'occupation des sols</li>
+                                    <li>• Résilience face aux pressions environnementales</li>
+                                    <li>• Potentiel érosif constant</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tab-4" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <img src="map/changement ecologique moyen.png" 
+                                 alt="Carte combinée" class="w-full h-64 object-cover rounded-lg shadow-md static-map">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-green-800 mb-4">Carte Combinée</h3>
+                            <p class="text-gray-700 mb-4">
+                                Cette carte synthétise les dynamiques érosives départementales en croisant les changements 
+                                positifs et négatifs. Elle permet d'identifier les départements présentant des dynamiques 
+                                contrastées nécessitant des interventions ciblées.
+                            </p>
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-700 mb-2">Interprétation</h4>
+                                <ul class="text-gray-700 text-sm space-y-1">
+                                    <li>• Identification des hotspots d'érosion</li>
+                                    <li>• Visualisation des dynamiques spatiales complexes</li>
+                                    <li>• Priorisation des zones d'intervention</li>
+                                    <li>• Analyse des tendances départementales</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carte Interactive -->
+    <section class="py-16 bg-green-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-6 section-title">Carte Interactive</h2>
+            <p class="text-center text-gray-700 max-w-3xl mx-auto mb-10">
+                Explorez les données de vulnérabilité à l'érosion par département. Sélectionnez différentes couches 
+                pour visualiser les changements positifs, négatifs et les zones stables.
+            </p>
+            
+            <div class="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-md">
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <button id="btn-positif" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center">
+                        <i class="fas fa-arrow-up mr-2"></i>
+                        Changements Positifs
+                    </button>
+                    <button id="btn-negatif" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center">
+                        <i class="fas fa-arrow-down mr-2"></i>
+                        Changements Négatifs
+                    </button>
+                    <button id="btn-stable" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+                        <i class="fas fa-pause mr-2"></i>
+                        Zones Stables
+                    </button>
+                    <button id="btn-combine" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center">
+                        <i class="fas fa-layer-group mr-2"></i>
+                        Vue Combinée
+                    </button>
+                    <button id="btn-reset" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Réinitialiser
+                    </button>
+                </div>
+                
+                <div class="map-container">
+                    <div id="map"></div>
+                    <div id="loading-indicator" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-1000" style="display: none;">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin text-4xl text-green-600 mb-4"></i>
+                            <p class="text-lg text-gray-700">Chargement des données...</p>
+                        </div>
+                    </div>
+                    <div class="map-overlay">
+                        <div id="legend" class="legend">
+                            <h4 class="font-semibold mb-2">Légende</h4>
+                            <div id="legend-content">
+                                <p class="text-sm text-gray-600">Sélectionnez une couche pour voir la légende</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-700 mb-2">Indicateurs Disponibles</h4>
+                        <ul class="text-gray-700 text-sm space-y-1">
+                            <li>• Pourcentage de changement positif</li>
+                            <li>• Pourcentage de changement négatif</li>
+                            <li>• Pourcentage de zones stables</li>
+                            <li>• Coefficient érosif moyen</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-700 mb-2">Fonctionnalités</h4>
+                        <ul class="text-gray-700 text-sm space-y-1">
+                            <li>• Zoom et déplacement</li>
+                            <li>• Cliquer pour les détails</li>
+                            <li>• Basculer entre les couches</li>
+                            <li>• Télécharger les données</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-700 mb-2">Échelle</h4>
+                        <ul class="text-gray-700 text-sm space-y-1">
+                            <li>• Analyse départementale</li>
+                            <li>• Données 2004-2019</li>
+                            <li>• Résolution: 500m</li>
+                            <li>• Source: MODIS</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Téléchargement des Cartes -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Téléchargement des Cartes</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-4 flex items-center">
+                            <i class="fas fa-download mr-3 text-green-600"></i>
+                            Cartes en Haute Résolution
+                        </h3>
+                        <p class="text-gray-700 mb-4">
+                            Téléchargez les cartes statiques en haute résolution pour vos présentations et publications.
+                        </p>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Carte des changements positifs (PDF)
+                            </a>
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Carte des changements négatifs (PDF)
+                            </a>
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Carte des zones stables (PDF)
+                            </a>
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Carte combinée (PDF)
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h3 class="text-xl font-semibold text-green-800 mb-4 flex items-center">
+                            <i class="fas fa-database mr-3 text-green-600"></i>
+                            Données Géospatiales
+                        </h3>
+                        <p class="text-gray-700 mb-4">
+                            Accédez aux données brutes et aux couches SIG pour vos propres analyses.
+                        </p>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-layer-group mr-2"></i>
+                                Données GEOJSON (Départements)
+                            </a>
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-layer-group mr-2"></i>
+                                Shapefile des limites administratives
+                            </a>
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-table mr-2"></i>
+                                Tableaux de données (CSV)
+                            </a>
+                            <a href="#" class="flex items-center text-green-700 hover:text-green-800">
+                                <i class="fas fa-images mr-2"></i>
+                                Images MODIS composites
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation entre pages -->
+    <section class="py-12 bg-green-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-4xl mx-auto">
+                <a href="resultats.html" class="flex items-center text-green-700 hover:text-green-800 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Voir les résultats
+                </a>
+                
+                <a href="contact.html" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 flex items-center">
+                    Nous contacter
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Étude de l'Érosion au Sénégal</h3>
+                    <p class="text-green-200">
+                        Analyse des changements de vulnérabilité à l'érosion entre 2004 et 2019 à l'échelle départementale.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Liens Rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-green-200 hover:text-white transition">Accueil</a></li>
+                        <li><a href="methodologie.html" class="text-green-200 hover:text-white transition">Méthodologie</a></li>
+                        <li><a href="resultats.html" class="text-green-200 hover:text-white transition">Résultats</a></li>
+                        <li><a href="cartes.html" class="text-green-200 hover:text-white transition">Cartes</a></li>
+                        <li><a href="contact.html" class="text-green-200 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-user mr-3 text-green-300"></i>
+                        <span>Mamadou SOW</span>
+                    </div>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-envelope mr-3 text-green-300"></i>
+                        <span>mamadou.sowa@astro-tubes.eu</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone mr-3 text-green-300"></i>
+                        <span>+221 79 311 79 54</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-green-800 mt-8 pt-8 text-center text-green-300">
+                <p>&copy; 2025 - Étude de la Dynamique de l'Érosion au Sénégal (2004-2019). Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal pour les cartes statiques -->
+    <div id="mapModal" class="map-modal">
+        <div class="map-modal-content">
+            <span class="map-modal-close">&times;</span>
+            <img id="modalMapImage" class="map-modal-image" src="" alt="Carte en grand format">
+            <div id="modalMapTitle" class="map-modal-title"></div>
+        </div>
+    </div>
+
+    <script>
+        // Menu mobile
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Onglets pour les cartes statiques
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Retirer la classe active de tous les boutons et contenus
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Ajouter la classe active au bouton cliqué et au contenu correspondant
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Initialisation de la carte Leaflet
+        const map = L.map('map').setView([14.4974, -14.4524], 7);
+        
+        // Ajout de la couche de base
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Variables pour stocker les couches et les données
+        let positiveLayer, negativeLayer, stableLayer, combinedLayer;
+        let senegalDepartments = null;
+        
+        // Fonction pour obtenir la couleur basée sur la catégorie (Faible, Moyen, Élevé)
+        function getColorByCategory(category, type) {
+            if (type === 'positif') {
+                // Vert pour les changements positifs
+                if (category === 'Élevé') return '#006400';      // Vert foncé
+                if (category === 'Moyen') return '#32CD32';     // Vert moyen
+                if (category === 'Faible') return '#90EE90';    // Vert clair
+                return '#E8F5E8'; // Très clair par défaut
+            } else if (type === 'negatif') {
+                // Rouge pour les changements négatifs
+                if (category === 'Élevé') return '#8B0000';      // Rouge foncé
+                if (category === 'Moyen') return '#DC143C';     // Rouge moyen
+                if (category === 'Faible') return '#FF6347';   // Rouge clair
+                return '#FFE4E1'; // Très clair par défaut
+            } else { // stable (nochange)
+                // Bleu pour les zones stables
+                if (category === 'Élevé') return '#000080';     // Bleu foncé
+                if (category === 'Moyen') return '#1E90FF';    // Bleu moyen
+                if (category === 'Faible') return '#87CEEB';   // Bleu clair
+                return '#F0F8FF'; // Très clair par défaut
+            }
+        }
+        
+        // Fonctions pour styliser les couches
+        function stylePositive(feature) {
+            const category = feature.properties.class_positive || 'Faible';
+            return {
+                fillColor: getColorByCategory(category, 'positif'),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.7
+            };
+        }
+        
+        function styleNegative(feature) {
+            const category = feature.properties.class_negative || 'Faible';
+            return {
+                fillColor: getColorByCategory(category, 'negatif'),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.7
+            };
+        }
+        
+        function styleStable(feature) {
+            const category = feature.properties.clas_nochange || 'Faible';
+            return {
+                fillColor: getColorByCategory(category, 'stable'),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.7
+            };
+        }
+        
+        function styleCombined(feature) {
+            const props = feature.properties;
+            const positive = props.class_positive || 'Faible';
+            const negative = props.class_negative || 'Faible';
+            
+            // Logique combinée : priorité aux changements négatifs élevés, puis positifs élevés
+            if (negative === 'Élevé') {
+                return {
+                    fillColor: '#8B0000', // Rouge foncé
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7
+                };
+            } else if (positive === 'Élevé') {
+                return {
+                    fillColor: '#006400', // Vert foncé
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7
+                };
+            } else if (negative === 'Moyen') {
+                return {
+                    fillColor: '#DC143C', // Rouge moyen
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7
+                };
+            } else if (positive === 'Moyen') {
+                return {
+                    fillColor: '#32CD32', // Vert moyen
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7
+                };
+            } else {
+                // Zones stables ou faibles changements
+                const nochange = props.clas_nochange || 'Faible';
+                return {
+                    fillColor: getColorByCategory(nochange, 'stable'),
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    fillOpacity: 0.7
+                };
+            }
+        }
+        
+        // Fonction pour afficher les informations dans un popup
+        function onEachFeature(feature, layer) {
+            if (feature.properties) {
+                const props = feature.properties;
+                const popupContent = `
+                    <div class="p-3" style="min-width: 200px;">
+                        <h3 class="font-bold text-lg mb-2">${props.departement || 'N/A'}</h3>
+                        <p class="mb-1"><strong>Région:</strong> ${props.region || 'N/A'}</p>
+                        <p class="mb-1"><strong>ID Département:</strong> ${props.id_dep || 'N/A'}</p>
+                        <hr class="my-2">
+                        <p class="mb-1"><strong>Changement Positif:</strong> 
+                            <span style="color: ${getColorByCategory(props.class_positive || 'Faible', 'positif')}; font-weight: bold;">
+                                ${props.class_positive || 'N/A'}
+                            </span>
+                        </p>
+                        <p class="mb-1"><strong>Changement Négatif:</strong> 
+                            <span style="color: ${getColorByCategory(props.class_negative || 'Faible', 'negatif')}; font-weight: bold;">
+                                ${props.class_negative || 'N/A'}
+                            </span>
+                        </p>
+                        <p class="mb-1"><strong>Non-Changement:</strong> 
+                            <span style="color: ${getColorByCategory(props.clas_nochange || 'Faible', 'stable')}; font-weight: bold;">
+                                ${props.clas_nochange || 'N/A'}
+                            </span>
+                        </p>
+                    </div>
+                `;
+                layer.bindPopup(popupContent);
+            }
+        }
+        
+        // Fonction pour activer/désactiver les boutons
+        function setButtonsEnabled(enabled) {
+            const buttons = ['btn-positif', 'btn-negatif', 'btn-stable', 'btn-combine', 'btn-reset'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = !enabled;
+                    btn.style.opacity = enabled ? '1' : '0.5';
+                    btn.style.cursor = enabled ? 'pointer' : 'not-allowed';
+                }
+            });
+        }
+        
+        // Désactiver les boutons initialement
+        setButtonsEnabled(false);
+        
+        // Afficher l'indicateur de chargement
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'flex';
+        }
+        
+        // Charger les données GeoJSON
+        fetch('data/donnees.geojson')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                senegalDepartments = data;
+                
+                // Créer les couches
+                positiveLayer = L.geoJSON(senegalDepartments, {
+                    style: stylePositive,
+                    onEachFeature: onEachFeature
+                });
+                
+                negativeLayer = L.geoJSON(senegalDepartments, {
+                    style: styleNegative,
+                    onEachFeature: onEachFeature
+                });
+                
+                stableLayer = L.geoJSON(senegalDepartments, {
+                    style: styleStable,
+                    onEachFeature: onEachFeature
+                });
+                
+                combinedLayer = L.geoJSON(senegalDepartments, {
+                    style: styleCombined,
+                    onEachFeature: onEachFeature
+                });
+                
+                // Ajuster la vue de la carte pour afficher toutes les données
+                if (senegalDepartments.features && senegalDepartments.features.length > 0) {
+                    const bounds = L.geoJSON(senegalDepartments).getBounds();
+                    map.fitBounds(bounds);
+                }
+                
+                // Masquer l'indicateur de chargement et activer les boutons
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+                setButtonsEnabled(true);
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement du fichier GeoJSON:', error);
+                if (loadingIndicator) {
+                    loadingIndicator.innerHTML = `
+                        <div class="text-center">
+                            <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+                            <p class="text-lg text-red-700 mb-2">Erreur de chargement</p>
+                            <p class="text-sm text-gray-600">Impossible de charger les données de la carte.</p>
+                            <p class="text-xs text-gray-500 mt-2">Vérifiez que le fichier data/donnees.geojson existe.</p>
+                        </div>
+                    `;
+                }
+                alert('Erreur lors du chargement des données de la carte. Veuillez vérifier que le fichier data/donnees.geojson existe.');
+            });
+        
+        // Fonction pour mettre à jour la légende
+        function updateLegend(type) {
+            const legendContent = document.getElementById('legend-content');
+            
+            if (type === 'positif') {
+                legendContent.innerHTML = `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #006400;"></div>
+                        <span>Élevé</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #32CD32;"></div>
+                        <span>Moyen</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #90EE90;"></div>
+                        <span>Faible</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Changements Positifs</p>
+                `;
+            } else if (type === 'negatif') {
+                legendContent.innerHTML = `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #8B0000;"></div>
+                        <span>Élevé</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #DC143C;"></div>
+                        <span>Moyen</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #FF6347;"></div>
+                        <span>Faible</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Changements Négatifs</p>
+                `;
+            } else if (type === 'stable') {
+                legendContent.innerHTML = `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #000080;"></div>
+                        <span>Élevé</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #1E90FF;"></div>
+                        <span>Moyen</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #87CEEB;"></div>
+                        <span>Faible</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Zones Stables</p>
+                `;
+            } else if (type === 'combine') {
+                legendContent.innerHTML = `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #8B0000;"></div>
+                        <span>Négatif Élevé</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #006400;"></div>
+                        <span>Positif Élevé</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #DC143C;"></div>
+                        <span>Négatif Moyen</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #32CD32;"></div>
+                        <span>Positif Moyen</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #87CEEB;"></div>
+                        <span>Stable/Faible</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Vue Combinée</p>
+                `;
+            } else {
+                legendContent.innerHTML = `
+                    <p class="text-sm text-gray-600">Sélectionnez une couche pour voir la légende</p>
+                `;
+            }
+        }
+        
+        // Gestionnaires d'événements pour les boutons
+        document.getElementById('btn-positif').addEventListener('click', function() {
+            if (!positiveLayer) return;
+            map.removeLayer(negativeLayer);
+            map.removeLayer(stableLayer);
+            map.removeLayer(combinedLayer);
+            map.addLayer(positiveLayer);
+            updateLegend('positif');
+        });
+        
+        document.getElementById('btn-negatif').addEventListener('click', function() {
+            if (!negativeLayer) return;
+            map.removeLayer(positiveLayer);
+            map.removeLayer(stableLayer);
+            map.removeLayer(combinedLayer);
+            map.addLayer(negativeLayer);
+            updateLegend('negatif');
+        });
+        
+        document.getElementById('btn-stable').addEventListener('click', function() {
+            if (!stableLayer) return;
+            map.removeLayer(positiveLayer);
+            map.removeLayer(negativeLayer);
+            map.removeLayer(combinedLayer);
+            map.addLayer(stableLayer);
+            updateLegend('stable');
+        });
+        
+        document.getElementById('btn-combine').addEventListener('click', function() {
+            if (!combinedLayer) return;
+            map.removeLayer(positiveLayer);
+            map.removeLayer(negativeLayer);
+            map.removeLayer(stableLayer);
+            map.addLayer(combinedLayer);
+            updateLegend('combine');
+        });
+        
+        document.getElementById('btn-reset').addEventListener('click', function() {
+            map.removeLayer(positiveLayer);
+            map.removeLayer(negativeLayer);
+            map.removeLayer(stableLayer);
+            map.removeLayer(combinedLayer);
+            updateLegend('reset');
+        });
+
+        // Gestion de la modal pour les cartes statiques
+        const mapModal = document.getElementById('mapModal');
+        const modalImage = document.getElementById('modalMapImage');
+        const modalTitle = document.getElementById('modalMapTitle');
+        const modalClose = document.querySelector('.map-modal-close');
+
+        // Titres des cartes
+        const mapTitles = {
+            'map/changement positif.png': 'Changements Positifs',
+            'map/changement negatif.png': 'Changements Négatifs',
+            'map/non changement.png': 'Zones Stables',
+            'map/changement ecologique moyen.png': 'Carte Combinée'
+        };
+
+        // Ajouter les gestionnaires de clic sur toutes les images statiques
+        document.querySelectorAll('.static-map').forEach(img => {
+            img.addEventListener('click', function() {
+                const imageSrc = this.getAttribute('src');
+                const imageAlt = this.getAttribute('alt');
+                
+                modalImage.src = imageSrc;
+                modalImage.classList.remove('zoomed'); // Réinitialiser le zoom
+                modalTitle.textContent = mapTitles[imageSrc] || imageAlt;
+                
+                mapModal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Empêcher le scroll de la page
+            });
+        });
+
+        // Fermer la modal en cliquant sur le bouton de fermeture
+        modalClose.addEventListener('click', function() {
+            closeModal();
+        });
+
+        // Fermer la modal en cliquant en dehors de l'image
+        mapModal.addEventListener('click', function(e) {
+            if (e.target === mapModal) {
+                closeModal();
+            }
+        });
+
+        // Fermer la modal avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mapModal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Fonction pour fermer la modal
+        function closeModal() {
+            mapModal.classList.remove('active');
+            modalImage.classList.remove('zoomed');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Zoom sur l'image au clic
+        modalImage.addEventListener('click', function(e) {
+            e.stopPropagation(); // Empêcher la fermeture de la modal
+            this.classList.toggle('zoomed');
+        });
+    </script>
+</body>
+</html>

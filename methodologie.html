@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Méthodologie - Étude de la Dynamique de l'Érosion au Sénégal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 82, 73, 0.85), rgba(0, 82, 73, 0.9)), url('https://images.unsplash.com/photo-1586769852044-692b95db5f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #10b981;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #059669, #10b981);
+            bottom: -10px;
+            left: 20%;
+        }
+        .method-step {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 3rem;
+        }
+        .method-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background-color: #059669;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .step-1::before { content: '1'; }
+        .step-2::before { content: '2'; }
+        .step-3::before { content: '3'; }
+        .step-4::before { content: '4'; }
+        .step-5::before { content: '5'; }
+        .method-step::after {
+            content: '';
+            position: absolute;
+            left: 0.9rem;
+            top: 2rem;
+            bottom: -3rem;
+            width: 2px;
+            background-color: #d1fae5;
+        }
+        .method-step:last-child::after {
+            display: none;
+        }
+        .coefficient-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .coefficient-table th, .coefficient-table td {
+            border: 1px solid #d1fae5;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .coefficient-table th {
+            background-color: #ecfdf5;
+            font-weight: 600;
+        }
+        .coefficient-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold mr-3">
+                    ES
+                </div>
+                <span class="text-xl font-bold text-green-800">Érosion Sénégal</span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Accueil</a>
+                <a href="methodologie.html" class="nav-link text-green-800 font-medium">Méthodologie</a>
+                <a href="resultats.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Résultats</a>
+                <a href="cartes.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Cartes</a>
+                <a href="contact.html" class="nav-link text-gray-600 hover:text-green-700 font-medium">Contact</a>
+            </div>
+            
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-green-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menu mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-4 px-4 shadow-lg">
+            <a href="index.html" class="block py-2 text-gray-600 hover:text-green-700">Accueil</a>
+            <a href="methodologie.html" class="block py-2 text-green-800 font-medium">Méthodologie</a>
+            <a href="resultats.html" class="block py-2 text-gray-600 hover:text-green-700">Résultats</a>
+            <a href="cartes.html" class="block py-2 text-gray-600 hover:text-green-700">Cartes</a>
+            <a href="contact.html" class="block py-2 text-gray-600 hover:text-green-700">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20 md:py-28">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Approche Méthodologique</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                Processus d'analyse des changements de vulnérabilité à l'érosion au Sénégal entre 2004 et 2019
+            </p>
+        </div>
+    </section>
+
+    <!-- Introduction Méthodologique -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Cadre Méthodologique</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-500 mb-10">
+                    <h3 class="text-xl font-semibold text-green-800 mb-3">Objectif Méthodologique</h3>
+                    <p class="text-gray-700">
+                        Développer une approche reproductible pour analyser et cartographier les changements de vulnérabilité 
+                        à l'érosion au Sénégal entre 2004 et 2019 à l'échelle départementale, en intégrant les coefficients 
+                        écologiques des différentes unités d'occupation du sol.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                        <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                            <i class="fas fa-satellite text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">Données Utilisées</h3>
+                        <ul class="text-gray-700 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span>Images MODIS (500m de résolution)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span>Période 2004-2018</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span>Limites administratives départementales</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                <span>Coefficients écologiques spécifiques</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                        <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                            <i class="fas fa-map-marked-alt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">Échelle d'Analyse</h3>
+                        <ul class="text-gray-700 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-layer-group text-green-500 mt-1 mr-2"></i>
+                                <span>Échelle départementale pour l'agrégation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-expand-arrows-alt text-green-500 mt-1 mr-2"></i>
+                                <span>Résolution adaptée à l'étendue du territoire</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-chart-bar text-green-500 mt-1 mr-2"></i>
+                                <span>Analyse comparative interpériodes</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Processus Méthodologique -->
+    <section class="py-16 bg-green-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Processus Méthodologique</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="method-step step-1">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Collecte et Prétraitement des Données</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-gray-700 mb-4">
+                            Collecte des images satellitaires MODIS annuelles pour deux périodes distinctes :
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-green-100 p-4 rounded">
+                                <h4 class="font-semibold text-green-800 mb-2">Période 1: 2004-2009</h4>
+                                <p class="text-gray-700 text-sm">Images annuelles collectées et sommées</p>
+                            </div>
+                            <div class="bg-green-100 p-4 rounded">
+                                <h4 class="font-semibold text-green-800 mb-2">Période 2: 2014-2019</h4>
+                                <p class="text-gray-700 text-sm">Images annuelles collectées et sommées</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">
+                            Création d'images composites moyennes pour chaque période en divisant la somme par le nombre d'observations.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="method-step step-2">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Réclassification avec Coefficients Écologiques</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-gray-700 mb-4">
+                            Transformation des images d'occupation du sol en cartes de vulnérabilité à l'érosion 
+                            en intégrant des coefficients écologiques spécifiques à chaque type d'occupation.
+                        </p>
+                        
+                        <h4 class="font-semibold text-green-700 mb-3">Coefficients Écologiques Utilisés</h4>
+                        <div class="overflow-x-auto">
+                            <table class="coefficient-table">
+                                <thead>
+                                    <tr>
+                                        <th>Type d'Occupation du Sol</th>
+                                        <th>Coefficient Écologique</th>
+                                        <th>Potentiel Érosif</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Végétation dense</td>
+                                        <td>0.1 - 0.3</td>
+                                        <td>Très faible</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Végétation clairsemée</td>
+                                        <td>0.4 - 0.6</td>
+                                        <td>Faible</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Terres agricoles</td>
+                                        <td>0.7 - 0.8</td>
+                                        <td>Moyen</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sols nus</td>
+                                        <td>0.9 - 1.0</td>
+                                        <td>Élevé</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Plans d'eau</td>
+                                        <td>0.0</td>
+                                        <td>Nul</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Zones urbaines</td>
+                                        <td>0.8 - 0.9</td>
+                                        <td>Élevé</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="method-step step-3">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Détection des Changements</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-gray-700 mb-4">
+                            Identification des changements de vulnérabilité à l'érosion par soustraction 
+                            des images réclassifiées entre les deux périodes.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-4">
+                            <div class="bg-red-50 p-4 rounded border-l-4 border-red-500">
+                                <h4 class="font-semibold text-red-700">Changements Négatifs</h4>
+                                <p class="text-sm text-gray-700">Valeurs de pixels négatives</p>
+                                <p class="text-red-600 font-bold">Augmentation du risque érosif</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded border-l-4 border-green-500">
+                                <h4 class="font-semibold text-green-700">Changements Positifs</h4>
+                                <p class="text-sm text-gray-700">Valeurs de pixels positives</p>
+                                <p class="text-green-600 font-bold">Réduction du risque érosif</p>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded border-l-4 border-blue-500">
+                                <h4 class="font-semibold text-blue-700">Zones Stables</h4>
+                                <p class="text-sm text-gray-700">Valeurs proches de zéro</p>
+                                <p class="text-blue-600 font-bold">Risque érosif constant</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="method-step step-4">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Cartographie des Résultats</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-gray-700 mb-4">
+                            Production de cartes thématiques pour visualiser les différents types de changements.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold text-green-700 mb-2">Cartes Produites</h4>
+                                <ul class="text-gray-700 space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-map text-green-500 mt-1 mr-2"></i>
+                                        <span>Carte des changements positifs</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-map text-green-500 mt-1 mr-2"></i>
+                                        <span>Carte des changements négatifs</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-map text-green-500 mt-1 mr-2"></i>
+                                        <span>Carte des zones stables</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-map text-green-500 mt-1 mr-2"></i>
+                                        <span>Carte combinée synthétique</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-green-700 mb-2">Méthode de Classification</h4>
+                                <ul class="text-gray-700 space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-chart-line text-green-500 mt-1 mr-2"></i>
+                                        <span>Méthode des ruptures naturelles (Natural Breaks)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-layer-group text-green-500 mt-1 mr-2"></i>
+                                        <span>Agrégation à l'échelle départementale</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-palette text-green-500 mt-1 mr-2"></i>
+                                        <span>Symbolique adaptée à chaque thématique</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="method-step step-5">
+                    <h3 class="text-2xl font-semibold text-green-800 mb-4">Analyse et Interprétation</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <p class="text-gray-700 mb-4">
+                            Interprétation des résultats pour identifier les dynamiques spatiales et orienter 
+                            les politiques de conservation des sols.
+                        </p>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Avantages de l'Approche</h4>
+                            <ul class="text-gray-700 space-y-1 text-sm">
+                                <li>• Réduction de la variabilité saisonnière grâce aux images composites</li>
+                                <li>• Évaluation directe de l'évolution de la vulnérabilité à l'érosion</li>
+                                <li>• Résultats directement exploitables pour la planification territoriale</li>
+                                <li>• Bon compromis entre couverture nationale et analyse départementale</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Limites Méthodologiques</h4>
+                            <ul class="text-gray-700 space-y-1 text-sm">
+                                <li>• Résolution de 500m limitant la détection de changements locaux</li>
+                                <li>• Gap temporel 2009-2014 pouvant masquer des dynamiques intermédiaires</li>
+                                <li>• Coefficients écologiques pouvant varier selon les conditions locales</li>
+                                <li>• Nécessité de validation terrain pour confirmer les résultats</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schéma Méthodologique -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-green-900 mb-12 section-title">Schéma Méthodologique</h2>
+            
+            <div class="max-w-5xl mx-auto bg-green-50 p-8 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mx-auto mb-3">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h4 class="font-semibold text-green-800 mb-2">Collecte</h4>
+                        <p class="text-xs text-gray-700">Images MODIS 2004-2018</p>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-arrow-right text-green-500 text-xl"></i>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mx-auto mb-3">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h4 class="font-semibold text-green-800 mb-2">Prétraitement</h4>
+                        <p class="text-xs text-gray-700">Images composites moyennes</p>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-arrow-right text-green-500 text-xl"></i>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mx-auto mb-3">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h4 class="font-semibold text-green-800 mb-2">Réclassification</h4>
+                        <p class="text-xs text-gray-700">Coefficients écologiques</p>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-arrow-right text-green-500 text-xl"></i>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mx-auto mb-3">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h4 class="font-semibold text-green-800 mb-2">Détection</h4>
+                        <p class="text-xs text-gray-700">Soustraction des images</p>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-arrow-right text-green-500 text-xl"></i>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mx-auto mb-3">
+                            <i class="fas fa-map"></i>
+                        </div>
+                        <h4 class="font-semibold text-green-800 mb-2">Cartographie</h4>
+                        <p class="text-xs text-gray-700">Production des cartes</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-gray-700 italic">
+                        Processus méthodologique complet de l'analyse des changements de vulnérabilité à l'érosion au Sénégal
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Outils et Logiciels -->
+    <section class="py-16 bg-green-800 text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 section-title">Outils et Logiciels Utilisés</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-green-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-desktop mr-3 text-green-300"></i>
+                            Logiciels SIG
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-300 mt-1 mr-2"></i>
+                                <span>QGIS pour le traitement des données spatiales</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-300 mt-1 mr-2"></i>
+                                <span>ArcGIS pour l'analyse avancée et la cartographie</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-300 mt-1 mr-2"></i>
+                                <span>Google Earth Engine pour le traitement des images MODIS</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-700 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center">
+                            <i class="fas fa-database mr-3 text-green-300"></i>
+                            Traitement des Données
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-300 mt-1 mr-2"></i>
+                                <span>Python avec bibliothèques GDAL et Rasterio</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-300 mt-1 mr-2"></i>
+                                <span>R pour l'analyse statistique des résultats</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-300 mt-1 mr-2"></i>
+                                <span>JavaScript pour la visualisation interactive</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation entre pages -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-4xl mx-auto">
+                <a href="index.html" class="flex items-center text-green-700 hover:text-green-800 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Retour à l'accueil
+                </a>
+                
+                <a href="resultats.html" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 flex items-center">
+                    Voir les résultats
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Étude de l'Érosion au Sénégal</h3>
+                    <p class="text-green-200">
+                        Analyse des changements de vulnérabilité à l'érosion entre 2004 et 2019 à l'échelle départementale.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Liens Rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-green-200 hover:text-white transition">Accueil</a></li>
+                        <li><a href="methodologie.html" class="text-green-200 hover:text-white transition">Méthodologie</a></li>
+                        <li><a href="resultats.html" class="text-green-200 hover:text-white transition">Résultats</a></li>
+                        <li><a href="cartes.html" class="text-green-200 hover:text-white transition">Cartes</a></li>
+                        <li><a href="contact.html" class="text-green-200 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-user mr-3 text-green-300"></i>
+                        <span>Mamadou SOW</span>
+                    </div>
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-envelope mr-3 text-green-300"></i>
+                        <span>mamadou.sowa@astro-tubes.eu</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone mr-3 text-green-300"></i>
+                        <span>+221 79 311 79 54</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-green-800 mt-8 pt-8 text-center text-green-300">
+                <p>&copy; 2025 - Étude de la Dynamique de l'Érosion au Sénégal (2004-2019). Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobile
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
